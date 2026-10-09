@@ -1,0 +1,316 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#101018">
+<title>FIREMODE GYM</title>
+<style>
+:root{--bg:#101018;--panel:#1c1c29;--orange:#ff642e;--yellow:#ffc857;--text:#f8f7ff;--muted:#aaaabd;--green:#62e6a2}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,Arial,sans-serif}
+header{padding:23px 18px;background:linear-gradient(135deg,#351522,#151522 65%);border-bottom:1px solid #35313c}
+.logo{font-size:25px;font-weight:1000;letter-spacing:1px}
+.logo span{color:var(--orange)}
+header p{color:#d3c9d1;margin:5px 0}
+main{max-width:720px;margin:auto;padding:16px}
+h2{font-size:21px;margin:8px 0 14px}
+h3{margin:0 0 12px}
+.card{background:var(--panel);border:1px solid #343344;border-radius:17px;padding:17px;margin-bottom:15px}
+.hero{background:linear-gradient(130deg,#55251f,#272035);border-color:#7e4035}
+.coach{font-size:43px;float:right;margin-left:8px}
+.quote{font-weight:800;color:var(--yellow);font-size:18px}
+.muted{color:var(--muted);font-size:13px}
+label{display:block;font-size:13px;color:#d4d2e0;margin:12px 0 5px}
+input,select{width:100%;background:#11111b;color:white;border:1px solid #464456;border-radius:10px;padding:12px;font-size:15px;min-height:44px}
+button{background:var(--orange);color:white;border:0;padding:12px 15px;border-radius:10px;font-weight:800;font-size:14px;cursor:pointer}
+button:active{transform:scale(.98)}
+.secondary{background:#343346}
+.danger{background:#6d2a35}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.stat{padding:13px;background:#11111b;border-radius:12px;overflow-wrap:anywhere}
+.stat strong{display:block;font-size:22px;color:var(--yellow);margin-top:5px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:15px}
+.tabs button{flex:1;min-width:100px}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.row>*{flex:1}
+.entry{border-bottom:1px solid #373546;padding:12px 0;overflow-wrap:anywhere}
+.entry:last-child{border:0}
+.full{width:100%;margin-top:12px}
+.hidden{display:none!important}
+#notice{color:var(--green);font-size:13px;margin-top:10px}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
+@media(min-width:560px){main{padding:24px}.card{padding:20px}}
+</style>
+</head>
+<body>
+<header>
+ <div class="logo">🔥 FIREMODE <span>GYM</span></div>
+ <p>Build discipline. Track progress. Manage smarter.</p>
+</header>
+<main>
+<section id="welcome">
+ <div class="card hero">
+  <div class="coach">🏋️</div>
+  <h2>WELCOME, WARRIOR!</h2>
+  <p class="quote">"Your next level starts with your next action."</p>
+  <p class="muted">Your cartoon training companion is ready. Set your own pace, stay consistent and celebrate progress.</p>
+ </div>
+ <div class="card">
+  <h3>Let's meet you</h3>
+  <label>Your name</label>
+  <input id="personName" placeholder="Enter your name" maxlength="50">
+  <label>Choose your role</label>
+  <select id="role">
+   <option value="trainee">🏃 Trainee — plan my workouts</option>
+   <option value="owner">🏢 Gym owner / trainer — manage my gym</option>
+  </select>
+  <button class="full" onclick="enterApp()">ENTER FIREMODE →</button>
+ </div>
+</section>
+
+<section id="dashboard" class="hidden">
+ <div class="card hero">
+  <div class="coach">🦸</div>
+  <p class="muted">YOUR TRAINING COMPANION</p>
+  <h2 id="hello">Welcome!</h2>
+  <p class="quote" id="motivation">Small steps. Strong habits.</p>
+  <button class="secondary" onclick="newQuote()">New motivation ↻</button>
+ </div>
+ <div class="tabs">
+  <button id="traineeTab" onclick="showPanel('trainee')">🏃 My workouts</button>
+  <button id="ownerTab" onclick="showPanel('owner')">🏢 My gym</button>
+  <button class="secondary" onclick="changeUser()">Switch user</button>
+ </div>
+
+ <div id="traineePanel">
+  <div class="card">
+   <h3>🎯 My aim board</h3>
+   <label>My goal</label>
+   <input id="goal" placeholder="e.g. Build a consistent exercise habit">
+   <div class="row">
+    <div><label>Start date</label><input id="startDate" type="date"></div>
+    <div><label>Target date</label><input id="targetDate" type="date"></div>
+   </div>
+   <button class="full" onclick="saveGoal()">Save my aim</button>
+   <p class="muted" id="goalInfo">Your goal will appear here.</p>
+  </div>
+
+  <div class="card">
+   <h3>📅 Today's training log</h3>
+   <label>Workout date</label>
+   <input id="workDate" type="date">
+   <label>Exercise</label>
+   <select id="exercise">
+    <option>Push-ups</option><option>Squats</option>
+    <option>Walking (minutes)</option><option>Jogging (minutes)</option>
+    <option>Steps</option><option>Cycling (minutes)</option>
+    <option>Stretching (minutes)</option><option>Other</option>
+   </select>
+   <label>Amount completed</label>
+   <input id="amount" type="number" min="0" max="1000000" placeholder="Enter a number">
+   <button class="full" onclick="addWorkout()">+ Record activity</button>
+   <p id="notice" role="status"></p>
+  </div>
+
+  <div class="grid">
+   <div class="stat">Activities logged<strong id="totalLogs">0</strong></div>
+   <div class="stat">Active dates<strong id="activeDays">0</strong></div>
+  </div>
+  <div class="card" style="margin-top:15px">
+   <h3>📈 My progress</h3>
+   <p class="muted">Your recent records, newest first.</p>
+   <div id="workoutHistory"></div>
+   <button class="secondary full" onclick="exportData()">Export my data</button>
+  </div>
+ </div>
+
+ <div id="ownerPanel" class="hidden">
+  <div class="card">
+   <h3>🏢 Gym profile</h3>
+   <label>Gym name</label><input id="gymName" placeholder="My Fitness Club">
+   <label>Number of members</label><input id="members" type="number" min="0" placeholder="0">
+   <label>Equipment / machines count</label><input id="machines" type="number" min="0" placeholder="0">
+   <label>Membership plans / bundles</label><input id="bundles" type="number" min="0" placeholder="0">
+   <button class="full" onclick="saveGym()">Save gym profile</button>
+  </div>
+  <div class="card">
+   <h3>💰 Monthly accounts</h3>
+   <label>Month</label><input id="accountMonth" type="month">
+   <label>Membership and other income (₹)</label><input id="income" type="number" min="0" placeholder="0">
+   <label>Rent (₹)</label><input id="rent" type="number" min="0" placeholder="0">
+   <label>Electricity (₹)</label><input id="electricity" type="number" min="0" placeholder="0">
+   <label>Staff salaries (₹)</label><input id="salary" type="number" min="0" placeholder="0">
+   <label>Equipment and other expenses (₹)</label><input id="otherCosts" type="number" min="0" placeholder="0">
+   <button class="full" onclick="saveAccounts()">Save monthly accounts</button>
+  </div>
+  <div class="grid">
+   <div class="stat">Total income<strong id="totalIncome">₹0</strong></div>
+   <div class="stat">Total expenses<strong id="totalExpenses">₹0</strong></div>
+  </div>
+  <div class="card" style="margin-top:15px">
+   <div class="stat">Monthly result<strong id="profit">₹0</strong><span id="profitLabel" class="muted">No account saved</span></div>
+   <h3 style="margin-top:18px">📒 Saved months</h3>
+   <div id="accountHistory"></div>
+  </div>
+ </div>
+ <button class="secondary full" onclick="exportData()">Export backup</button>
+ <button class="danger full" onclick="clearData()">Clear saved data</button>
+</section>
+</main>
+<footer>FIREMODE GYM · Your journey, your pace.<br>First version · Data saved on this browser only.</footer>
+
+<script>
+const $=id=>document.getElementById(id);
+const KEY="firemode_gym_v1";
+const quotes=[
+ "Aim high. Start small. Keep going. 🔥",
+ "Discipline grows one choice at a time.",
+ "Progress, not perfection.",
+ "Your consistency is your strength.",
+ "A smart plan includes rest and recovery."
+];
+let data;
+try{data=JSON.parse(localStorage.getItem(KEY))||{};}catch(e){data={};}
+data.users ||= {};
+let current="";
+function persist(){
+ try{localStorage.setItem(KEY,JSON.stringify(data));}
+ catch(e){alert("Storage is full or unavailable. Export your data and free some browser storage.");}
+}
+function profile(){return data.users[current];}
+function enterApp(){
+ const name=$("personName").value.trim();
+ if(!name){alert("Enter your name first!");return;}
+ const role=$("role").value;
+ current=name.toLowerCase();
+ if(!data.users[current])data.users[current]={name,role,goal:"",start:"",target:"",logs:[],gym:{},accounts:{}};
+ const p=profile();p.name=name;p.role=role;
+ persist();openDashboard();
+}
+function changeUser(){
+ $("dashboard").classList.add("hidden");
+ $("welcome").classList.remove("hidden");
+ $("personName").value="";
+}
+function openDashboard(){
+ $("welcome").classList.add("hidden");
+ $("dashboard").classList.remove("hidden");
+ const p=profile();
+ $("hello").textContent="Welcome, "+p.name+"!";
+ $("traineeTab").classList.toggle("hidden",p.role!=="trainee");
+ $("ownerTab").classList.toggle("hidden",p.role!=="owner");
+ showPanel(p.role);
+ loadTrainee();loadOwner();
+}
+function showPanel(which){
+ $("traineePanel").classList.toggle("hidden",which!=="trainee");
+ $("ownerPanel").classList.toggle("hidden",which!=="owner");
+}
+function newQuote(){
+ $("motivation").textContent=quotes[Math.floor(Math.random()*quotes.length)];
+}
+function today(){return new Date().toLocaleDateString("en-CA");}
+function loadTrainee(){
+ const p=profile();if(!p)return;
+ $("goal").value=p.goal||"";
+ $("startDate").value=p.start||"";
+ $("targetDate").value=p.target||"";
+ $("workDate").value=today();
+ $("goalInfo").textContent=p.goal?
+ "Goal: "+p.goal+" · Target: "+(p.target||"Not set"):"Your goal will appear here.";
+ $("totalLogs").textContent=p.logs.length;
+ $("activeDays").textContent=new Set(p.logs.map(x=>x.date)).size;
+ $("workoutHistory").innerHTML="";
+ [...p.logs].reverse().forEach((x,i)=>{
+  const d=document.createElement("div");d.className="entry";
+  const line=document.createElement("div");
+  line.textContent=x.date+" · "+x.exercise+" — "+x.amount;
+  const del=document.createElement("button");del.className="danger";del.textContent="Delete";
+  del.style.marginTop="8px";
+  del.onclick=()=>{if(confirm("Delete this activity?")){p.logs.splice(p.logs.length-1-i,1);persist();loadTrainee();}};
+  d.append(line,del);$("workoutHistory").append(d);
+ });
+ if(!p.logs.length)$("workoutHistory").textContent="No activities yet. Record your first one!";
+}
+function saveGoal(){
+ const p=profile(),start=$("startDate").value,target=$("targetDate").value;
+ if(start&&target&&target<start){alert("Target date must be on or after the start date.");return;}
+ p.goal=$("goal").value.trim();p.start=start;p.target=target;
+ persist();loadTrainee();alert("Aim board saved!");
+}
+function addWorkout(){
+ const p=profile(),n=Number($("amount").value),date=$("workDate").value;
+ if(!date){alert("Choose a date.");return;}
+ if($("amount").value.trim()===""||!Number.isFinite(n)||n<0||n>1000000){alert("Enter a valid non-negative amount.");return;}
+ if(date>today()){alert("Choose today or an earlier date.");return;}
+ p.logs.push({date,exercise:$("exercise").value,amount:n});
+ persist();$("amount").value="";loadTrainee();
+ $("notice").textContent="Activity saved! Keep it consistent.";
+}
+function num(id){const v=$(id).value;if(v.trim()==="")return 0;const n=Number(v);return Number.isFinite(n)&&n>=0?n:null;}
+function money(n){return "₹"+n.toLocaleString("en-IN",{maximumFractionDigits:2});}
+function saveGym(){
+ const p=profile(),g={};
+ for(const id of ["members","machines","bundles"]){
+  const n=num(id);if(n===null){alert("Enter non-negative counts.");return;}g[id]=n;
+ }
+ g.name=$("gymName").value.trim();
+ p.gym=g;persist();alert("Gym profile saved!");
+}
+function loadOwner(){
+ const p=profile();if(!p)return;
+ const g=p.gym||{};
+ $("gymName").value=g.name||"";
+ ["members","machines","bundles"].forEach(id=>$(id).value=g[id]??"");
+ $("accountMonth").value=today().slice(0,7);
+ renderAccounts();
+}
+function saveAccounts(){
+ const p=profile(),month=$("accountMonth").value;
+ if(!month){alert("Choose a month.");return;}
+ const a={};
+ for(const id of ["income","rent","electricity","salary","otherCosts"]){
+  const n=num(id);if(n===null){alert("Enter non-negative amounts.");return;}a[id]=n;
+ }
+ p.accounts ||= {};p.accounts[month]=a;
+ persist();renderAccounts();alert("Monthly accounts saved!");
+}
+function renderAccounts(){
+ const p=profile();if(!p)return;
+ const accounts=p.accounts||{},month=$("accountMonth").value;
+ const a=accounts[month]||{};
+ ["income","rent","electricity","salary","otherCosts"].forEach(id=>$(id).value=a[id]??"");
+ const income=a.income||0,expenses=(a.rent||0)+(a.electricity||0)+(a.salary||0)+(a.otherCosts||0);
+ $("totalIncome").textContent=money(income);
+ $("totalExpenses").textContent=money(expenses);
+ $("profit").textContent=money(income-expenses);
+ $("profit").style.color=income-expenses<0?"#ff806e":"var(--green)";
+ $("profitLabel").textContent=accounts[month]?(income>=expenses?"Surplus before other unrecorded costs":"Recorded costs exceed income"):"No account saved for this month";
+ $("accountHistory").innerHTML="";
+ Object.keys(accounts).sort().reverse().forEach(m=>{
+  const v=accounts[m],cost=(v.rent||0)+(v.electricity||0)+(v.salary||0)+(v.otherCosts||0);
+  const d=document.createElement("div");d.className="entry";
+  const label=document.createElement("div");
+  label.textContent=m+" · Income "+money(v.income||0)+" · Expenses "+money(cost)+" · Result "+money((v.income||0)-cost);
+  const btn=document.createElement("button");btn.className="secondary";btn.textContent="View month";
+  btn.style.marginTop="8px";btn.onclick=()=>{$("accountMonth").value=m;renderAccounts();};
+  d.append(label,btn);$("accountHistory").append(d);
+ });
+ if(!Object.keys(accounts).length)$("accountHistory").textContent="No monthly accounts saved yet.";
+}
+$("accountMonth").addEventListener("change",renderAccounts);
+function exportData(){
+ const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+ const url=URL.createObjectURL(blob),a=document.createElement("a");
+ a.href=url;a.download="firemode-backup.json";a.click();
+ setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+function clearData(){
+ if(!confirm("Delete all FIREMODE GYM data saved on this browser? Export a backup first if needed."))return;
+ data={users:{}};persist();current="";changeUser();
+}
+</script>
+</body>
+</html>
